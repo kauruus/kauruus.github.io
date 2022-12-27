@@ -1,5 +1,5 @@
 @def title = "Kauruus Blog"
 
-# K's blog    
+# Kauruus blog    
 
 {{ posts }}
