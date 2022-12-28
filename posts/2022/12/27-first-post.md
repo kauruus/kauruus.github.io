@@ -6,7 +6,7 @@ title = "First Post"
 
 Just setup LunarVIM, Neovide and Franklin.
 
-They all work out of box, save me so many time.
+They all work out of box, save me so much time.
 
 ## LunarVIM
 
