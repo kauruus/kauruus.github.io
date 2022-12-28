@@ -1,0 +1,34 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/tufte.css"> <link rel=stylesheet  href="/css/latex.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=icon  href="/assets/favicon.png"> <title>Build swoole-cli for Old Machines</title> <div id=layout > <div id=menu > <ul> <li><a href="/">Home</a> </ul> </div> <div id=main > <div class=franklin-content > <h1 id=title ><a href="#title" class=header-anchor >Build swoole-cli for Old Machines</a></h1> <p><a href="https://github.com/swoole/swoole-cli/">swoole-cli</a> is a static build of php cli, with many bundled extensions.</p> <p>I love static binary.</p> <p>But the official build failed on my old machine &#40;Pentium T4500&#41;.</p> <h2 id=illegal_instruction ><a href="#illegal_instruction" class=header-anchor >Illegal instruction ?</a></h2> <p>When I run the official binary, I got an <code>Illegal instruction</code> error:</p> <pre><code class="julia hljs">$ ./swoole-cli
+Illegal instruction (core dumped)</code></pre> <p>Seems my CPU is too old, and the official is built for modern CPUs.</p> <p>I tried to build swoole-cli on my machine, but it still fails.</p> <p>Let&#39;s see which instruction cause the problem with gdb.</p> <pre><code class="julia hljs">$ gdb ./swoole-cli
+(gdb) r
+Program received signal SIGILL, Illegal instruction.
+<span class=hljs-number >0x00000000007d01fc</span> <span class=hljs-keyword >in</span> zend_register_constant (c=c<span class=hljs-meta >@entry</span>=<span class=hljs-number >0x7fffffffd548</span>) at Zend/zend_constants.c:<span class=hljs-number >586</span>
+<span class=hljs-number >586</span>     Zend/zend_constants.c: No such file or directory.
+
+(gdb) disassemble <span class=hljs-number >0x7d01fc</span>
+...
+   <span class=hljs-number >0x00000000007d01e8</span> &lt;+<span class=hljs-number >228</span>&gt;:   pxor   <span class=hljs-number >0x12b2040</span>(%rip),%xmm1        <span class=hljs-comment ># 0x1a82230</span>
+   <span class=hljs-number >0x00000000007d01f0</span> &lt;+<span class=hljs-number >236</span>&gt;:   pxor   <span class=hljs-number >0x12b2048</span>(%rip),%xmm0        <span class=hljs-comment ># 0x1a82240</span>
+   <span class=hljs-number >0x00000000007d01f8</span> &lt;+<span class=hljs-number >244</span>&gt;:   por    %xmm1,%xmm0
+=&gt; <span class=hljs-number >0x00000000007d01fc</span> &lt;+<span class=hljs-number >248</span>&gt;:   ptest  %xmm0,%xmm0
+   <span class=hljs-number >0x00000000007d0201</span> &lt;+<span class=hljs-number >253</span>&gt;:   jne    <span class=hljs-number >0x7d0229</span> &lt;zend_register_constant+<span class=hljs-number >293</span>&gt;
+   <span class=hljs-number >0x00000000007d0203</span> &lt;+<span class=hljs-number >255</span>&gt;:   jmp    <span class=hljs-number >0x7d029f</span> &lt;zend_register_constant+<span class=hljs-number >411</span>&gt;
+   <span class=hljs-number >0x00000000007d0208</span> &lt;+<span class=hljs-number >260</span>&gt;:   test   $<span class=hljs-number >0x1</span>,%r13b
+...</code></pre> <p>Aha, <code>ptest</code> is introduced in <a href="https://en.wikipedia.org/wiki/SSE4#SSE4.1">SSE4.1</a>, which is not support by my Pentium CPU.</p> <h2 id=why_sse41 ><a href="#why_sse41" class=header-anchor >Why SSE4.1</a></h2> <p>So the build system doesn&#39;t build based on my CPU, and it&#39;s hard-coded to use SSE4.1 .</p> <p>I skim through the <code>sapi/make.php</code> script, and find this line:</p> <pre><code class="julia hljs">make EXTRA_CFLAGS=&#x27;-fno-ident -Xcompiler -march=nehalem -Xcompiler -mtune=haswell -Os</code></pre>
+<p>Okay, I change both <code>-march</code> and <code>-mtune</code> to <code>native</code>.</p>
+<p>Rebuild and it runs correctly.</p>
+<pre><code class="julia hljs">$ ./swoole-cli -v
+./bin/swoole-cli -v
+Swoole <span class=hljs-number >5.0</span><span class=hljs-number >.1</span> (cli) (built: Dec <span class=hljs-number >28</span> <span class=hljs-number >2022</span> <span class=hljs-number >15</span>:<span class=hljs-number >03</span>:<span class=hljs-number >25</span>) (NTS)</code></pre>
+<div class=page-foot >
+    Kauruus <br>
+    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> <br>
+    Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+</div>
+</div>
+        </div> 
+    </div> 
+    
+    
+        <script src="/libs/highlight/highlight.min.js"></script>
+<script>hljs.highlightAll();hljs.configure({tabReplace: '    '});</script>
