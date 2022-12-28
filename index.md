@@ -3,3 +3,4 @@
 # Kauruus blog    
 
 {{ posts }}
+
