@@ -15,11 +15,13 @@ So I have to build it myself.
 
 There are `cubicsdr-git` and `cubicsdr` in AUR.
 
-I tried `cubicsdr-git`, it need to compile WxWidget, which is super time-consuming.
+I tried `cubicsdr-git`, it need to compile WxWidgets, which is super time-consuming.
 
-Hey, we already have prebuilt WxWidget, why do we need to compile an old version.
+Hey, we already have prebuilt WxWidgets in Arch package repository, why bother to compile an old version?
 
-## Build CubisSDR
+## Building CubisSDR
+
+You can follow dependencies list in `cubicsdr-git`.
 
 Some dependencies like freeglut are already installed in my machine.
 
@@ -28,8 +30,6 @@ So I just install some new dependencies:
 ```
 pacman -S wxwidgets-gtk3 hamlib soapysdr liquid-dsp
 ```
-
-You can follow dependencies list in `cubicsdr-git`.
 
 Clone and build:
 
