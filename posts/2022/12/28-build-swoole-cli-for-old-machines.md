@@ -63,7 +63,6 @@ Rebuild and it runs correctly.
 
 ```
 $ ./swoole-cli -v
-./bin/swoole-cli -v
 Swoole 5.0.1 (cli) (built: Dec 28 2022 15:03:25) (NTS)
 ```
 
