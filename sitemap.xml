@@ -14,6 +14,12 @@
     <priority>0.5</priority>
 </url>
 <url>
+    <loc>https://kauruus.github.io/posts/2022/12/28-build-cubicsdr-for-archlinux/index.html</loc>
+    <lastmod>2022-12-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
     <loc>https://kauruus.github.io/posts/2022/12/27-first-post/index.html</loc>
     <lastmod>2022-12-28</lastmod>
     <changefreq>monthly</changefreq>
