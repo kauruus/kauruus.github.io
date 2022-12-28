@@ -18,7 +18,7 @@ I run LunarVIM in a remote machine, so I start it with `--listen 0.0.0.0:<port>`
 
 Simply download the prebuilt binary from github.
 
-Connect to remove LunarVIM with `neovide --remote-tcp <host>:<port>`.
+Connect to remote LunarVIM with `neovide --remote-tcp <host>:<port>`.
 
 I just add one config to `~/.config/lvim/config.lua`:
 
@@ -26,7 +26,7 @@ I just add one config to `~/.config/lvim/config.lua`:
 vim.g.neovide_scale_factor = 1.5
 ```
 
-But clipboard and input method doesn't work :(
+But [clipboard](https://github.com/neovide/neovide/issues/1331) and [input method](https://github.com/neovide/neovide/issues/1006) doesn't work :(
 
 ## Franklin
 
