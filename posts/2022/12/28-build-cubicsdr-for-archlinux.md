@@ -1,5 +1,6 @@
 +++
 title = "Build CubicSDR for Arch Linux"
+has_code = true
 +++
 
 # {{ title }}
