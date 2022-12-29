@@ -3,31 +3,37 @@
 
 <url>
     <loc>https://kauruus.github.io/404/index.html</loc>
-    <lastmod>2022-12-28</lastmod>
+    <lastmod>2022-12-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>https://kauruus.github.io/index.html</loc>
-    <lastmod>2022-12-28</lastmod>
+    <lastmod>2022-12-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>https://kauruus.github.io/posts/2022/12/28-build-swoole-cli-for-old-machines/index.html</loc>
-    <lastmod>2022-12-28</lastmod>
+    <lastmod>2022-12-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>https://kauruus.github.io/posts/2022/12/28-build-cubicsdr-for-archlinux/index.html</loc>
-    <lastmod>2022-12-28</lastmod>
+    <lastmod>2022-12-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>https://kauruus.github.io/posts/2022/12/29-high-hpet-cpu-usage/index.html</loc>
+    <lastmod>2022-12-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>https://kauruus.github.io/posts/2022/12/27-first-post/index.html</loc>
-    <lastmod>2022-12-28</lastmod>
+    <lastmod>2022-12-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
