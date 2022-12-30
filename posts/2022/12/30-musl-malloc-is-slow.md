@@ -4,7 +4,7 @@ title = "Musl Malloc is Slow"
 
 # {{ title }}
 
-So I have [built swoole-cli](/posts/2022/12/28-build-swoole-cli-for-old-machines/), and figured out the [HEPT issue](/posts/2022/12/29-high-hpet-cpu-usage/).
+So I have [built swoole-cli](/posts/2022/12/28-build-swoole-cli-for-old-machines/), and figured out the [HPET issue](/posts/2022/12/29-high-hpet-cpu-usage/).
 
 Let's see how it performs.
 
