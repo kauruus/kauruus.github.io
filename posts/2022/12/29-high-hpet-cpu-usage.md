@@ -5,7 +5,7 @@ has_code = true
 
 # {{ title }}
 
-After I [built swoole-cli](./28-build-swoole-cli-for-old-machines.md), I did't some benchmark to see how it performs.
+After I [built swoole-cli](/posts/2022/12/28-build-swoole-cli-for-old-machines/), I did't some benchmark to see how it performs.
 
 
 I tried `wrk` and `wrk2`, and found that `wrk2` performs much wrost than `wrk`.
@@ -101,3 +101,4 @@ I tried to port [MengRao/tscns](https://github.com/MengRao/tscns) to C, and plug
 When I run the benchmark, wrk2 encounter negative latency value :(
 
 So, kernel is correct, better not use TSC when it's not stable.
+
