@@ -125,7 +125,7 @@ Requests/sec:  16432.60
 Transfer/sec:      2.59MB
 ```
 
-Again, from the on-CPU flamegraph I can't see any problem. But from the off-CPU time flamegraph, it's spend most time doing network calls now.
+Again, from the on-CPU flamegraph I can't see any problem. But from the off-CPU time flamegraph, it's spends most time doing network calls now.
 
  
 ![](/assets/images/swoole-cli-mimalloc-flamegraph.svg)
@@ -134,11 +134,9 @@ Again, from the on-CPU flamegraph I can't see any problem. But from the off-CPU 
 
 ## What about newer machines?
 
-So I didn't all above on a Pentium T4500 machine, it's quite old.
+So I did all above on a Pentium T4500 machine, it's quite old.
 
-I copy the binary to an AMD Zen3 machine.
-
-The difference is not that much between musl malloc and mimalloc.
+I also copy the binary to an AMD Zen3 machine to see how it performs.
 
 With musl malloc (from 400 to 14000):
 
