@@ -5,8 +5,7 @@ has_code = true
 
 # {{ title }}
 
-After I [built swoole-cli](/posts/2022/12/28-build-swoole-cli-for-old-machines/), I did't some benchmark to see how it performs.
-
+After I [built swoole-cli](/posts/2022/12/28-build-swoole-cli-for-old-machines/), I did some benchmark to see how it performs.
 
 I tried `wrk` and `wrk2`, and found that `wrk2` performs much wrost than `wrk`.
 
@@ -52,7 +51,7 @@ There are many great articles about HPET and TSC:
 - [Pitfalls of TSC usage](https://oliveryang.net/2015/09/pitfalls-of-TSC-usage/#32-software-tsc-usage-bugs)
 - [A Performance Issue Caused by the TSC Clock Source Missing in Linux](https://deeperf.com/2019/04/30/tsc-clock-missing-caused-performance-issues/)
 
-Basically, HPET clock is from a chip on the monitor, while TSC is from inside the CPU. So HPET is cost much more than TSC, and it's less accurate.
+Basically, HPET clock is from a chip on the monitor, while TSC is from inside the CPU. So HPET cost much more than TSC, and it's less accurate.
 
 ## Why using HEPT?  
 
