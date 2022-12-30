@@ -1,0 +1,82 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/tufte.css"> <link rel=stylesheet  href="/css/latex.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=icon  href="/assets/favicon.png"> <title>Musl Malloc is Slow</title> <div id=layout > <div id=menu > <ul> <li><a href="/">Home</a> </ul> </div> <div id=main > <div class=franklin-content > <h1 id=title ><a href="#title" class=header-anchor >Musl Malloc is Slow</a></h1> <p>So I have <a href="/posts/2022/12/28-build-swoole-cli-for-old-machines/">built swoole-cli</a>, and figured out the <a href="/posts/2022/12/29-high-hpet-cpu-usage/">HEPT issue</a>.</p> <p>Let&#39;s see how it performs.</p> <p>Start with 1 thread and 10 clients:</p> <pre><code class="julia hljs">$ wrk -c <span class=hljs-number >10</span> -t <span class=hljs-number >1</span> -d <span class=hljs-number >10</span>s -L http://<span class=hljs-number >127.0</span><span class=hljs-number >.0</span><span class=hljs-number >.1</span>:<span class=hljs-number >9501</span>
+Running <span class=hljs-number >10</span>s test @ http://<span class=hljs-number >127.0</span><span class=hljs-number >.0</span><span class=hljs-number >.1</span>:<span class=hljs-number >9501</span>
+  <span class=hljs-number >1</span> threads and <span class=hljs-number >10</span> connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    <span class=hljs-number >22.93</span>ms    <span class=hljs-number >1.79</span>ms  <span class=hljs-number >50.95</span>ms   <span class=hljs-number >93.16</span>%
+    Req/Sec   <span class=hljs-number >437.09</span>     <span class=hljs-number >10.57</span>   <span class=hljs-number >450.00</span>     <span class=hljs-number >86.00</span>%
+  Latency Distribution
+     <span class=hljs-number >50</span>%   <span class=hljs-number >22.74</span>ms
+     <span class=hljs-number >75</span>%   <span class=hljs-number >22.94</span>ms
+     <span class=hljs-number >90</span>%   <span class=hljs-number >23.28</span>ms
+     <span class=hljs-number >99</span>%   <span class=hljs-number >29.29</span>ms
+  <span class=hljs-number >4357</span> requests <span class=hljs-keyword >in</span> <span class=hljs-number >10.01</span>s, <span class=hljs-number >702.06</span>KB read
+Requests/sec:    <span class=hljs-number >435.13</span>
+Transfer/sec:     <span class=hljs-number >70.11</span>KB</code></pre> <p>OMG, QPS is less than 500. On the same machine, Go can do over 10k qps.</p> <h2 id=flamegraph_to_help ><a href="#flamegraph_to_help" class=header-anchor >Flamegraph to help</a></h2> <p>Flamegraph is my go-to tool for troubleshoting performance issue.</p> <pre><code class="julia hljs">$ perf record --call-graph dwarf swoole-cli ./http-hello.php
+$ <span class=hljs-comment ># start wrk in another terminal, after benchmark, Ctrl-C to stop perf</span>
+$ perf script | inferno-collapse-perf | inferno-flamegraph &gt; flamegraph.svg</code></pre> <p>And here&#39;s the flamegraph&#40;open in new tab to see details&#41;, frankly speeking, I don&#39;t see any problem in it.</p> <p><img src="/assets/images/swoole-cli-flamegraph.svg" alt="" /></p> <p>What about off-CPU time? </p> <pre><code class="julia hljs">$ /usr/share/bcc/tools/offcputime -df -p $(pidof swoole-cli) &gt; wait.stack
+$ &lt; wait.stack inferno-flamegraph -c blue &gt; offcputime.svg</code></pre> <p><img src="/assets/images/swoole-cli-offcputime.svg" alt="" /></p> <p>Hmm, we are waiting for <code>__munmap</code> and <code>enframe</code> and lots of page faults. Maybe memory issue?</p> <h2 id=mimalloc_to_help ><a href="#mimalloc_to_help" class=header-anchor >Mimalloc to help</a></h2> <p>We all known musl&#39;s malloc is slow, and swoole-cli has <a href="https://github.com/swoole/swoole-cli/pull/6">support mimalloc</a>.</p> <p>Let&#39;s see if my swoole-cli using mimalloc:</p> <pre><code class="julia hljs">$ MIMALLOC_VERBOSE=<span class=hljs-number >1</span> swoole-cl
+(no output)</code></pre> <p>Ah, mimalloc is not linked.</p> <p>From the build script, I found it didn&#39;t add <code>-lmimalloc</code> :&#40;</p> <p>Add that flag back and recompile, it now has mimalloc linked.</p> <pre><code class="julia hljs">$ MIMALLOC_VERBOSE=<span class=hljs-number >1</span> swoole-cli
+mimalloc: process init: <span class=hljs-number >0x7f708cf35020</span>
+mimalloc: secure level: <span class=hljs-number >0</span>
+mimalloc: <span class=hljs-keyword >using</span> <span class=hljs-number >1</span> numa regions
+mimalloc: option &#x27;show_errors&#x27;: <span class=hljs-number >0</span>
+mimalloc: option &#x27;show_stats&#x27;: <span class=hljs-number >0</span>
+mimalloc: option &#x27;eager_commit&#x27;: <span class=hljs-number >1</span>
+mimalloc: option &#x27;deprecated_eager_region_commit&#x27;: <span class=hljs-number >0</span>
+mimalloc: option &#x27;deprecated_reset_decommits&#x27;: <span class=hljs-number >0</span>
+mimalloc: option &#x27;large_os_pages&#x27;: <span class=hljs-number >0</span>
+mimalloc: option &#x27;reserve_huge_os_pages&#x27;: <span class=hljs-number >0</span>
+mimalloc: option &#x27;reserve_huge_os_pages_at&#x27;: -<span class=hljs-number >1</span>
+mimalloc: option &#x27;reserve_os_memory&#x27;: <span class=hljs-number >0</span>
+mimalloc: option &#x27;deprecated_segment_cache&#x27;: <span class=hljs-number >0</span>
+mimalloc: option &#x27;page_reset&#x27;: <span class=hljs-number >0</span>
+mimalloc: option &#x27;abandoned_page_decommit&#x27;: <span class=hljs-number >0</span>
+mimalloc: option &#x27;deprecated_segment_reset&#x27;: <span class=hljs-number >0</span>
+mimalloc: option &#x27;eager_commit_delay&#x27;: <span class=hljs-number >1</span>
+mimalloc: option &#x27;decommit_delay&#x27;: <span class=hljs-number >25</span>
+mimalloc: option &#x27;use_numa_nodes&#x27;: <span class=hljs-number >0</span>
+mimalloc: option &#x27;limit_os_alloc&#x27;: <span class=hljs-number >0</span>
+mimalloc: option &#x27;os_tag&#x27;: <span class=hljs-number >100</span>
+mimalloc: option &#x27;max_errors&#x27;: <span class=hljs-number >16</span>
+mimalloc: option &#x27;max_warnings&#x27;: <span class=hljs-number >16</span>
+mimalloc: option &#x27;max_segment_reclaim&#x27;: <span class=hljs-number >8</span>
+mimalloc: option &#x27;allow_decommit&#x27;: <span class=hljs-number >1</span>
+mimalloc: option &#x27;segment_decommit_delay&#x27;: <span class=hljs-number >500</span>
+mimalloc: option &#x27;decommit_extend_delay&#x27;: <span class=hljs-number >2</span></code></pre> <p>And now it performs much better:</p> <pre><code class="julia hljs">Running <span class=hljs-number >10</span>s test @ http://<span class=hljs-number >127.0</span><span class=hljs-number >.0</span><span class=hljs-number >.1</span>:<span class=hljs-number >9501</span>
+  <span class=hljs-number >1</span> threads and <span class=hljs-number >10</span> connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   <span class=hljs-number >601.61</span>us  <span class=hljs-number >186.81</span>us   <span class=hljs-number >4.51</span>ms   <span class=hljs-number >87.57</span>%
+    Req/Sec    <span class=hljs-number >16.52</span>k   <span class=hljs-number >378.21</span>    <span class=hljs-number >16.91</span>k    <span class=hljs-number >89.00</span>%
+  Latency Distribution
+     <span class=hljs-number >50</span>%  <span class=hljs-number >531.00</span>us
+     <span class=hljs-number >75</span>%  <span class=hljs-number >550.00</span>us
+     <span class=hljs-number >90</span>%    <span class=hljs-number >1.05</span>ms
+     <span class=hljs-number >99</span>%    <span class=hljs-number >1.12</span>ms
+  <span class=hljs-number >164353</span> requests <span class=hljs-keyword >in</span> <span class=hljs-number >10.00</span>s, <span class=hljs-number >25.86</span>MB read
+Requests/sec:  <span class=hljs-number >16432.60</span>
+Transfer/sec:      <span class=hljs-number >2.59</span>MB</code></pre> <p>Again, from the on-CPU flamegraph I can&#39;t see any problem. But from the off-CPU time flamegraph, it&#39;s spend most time doing network calls now.</p> <p><img src="/assets/images/swoole-cli-mimalloc-flamegraph.svg" alt="" /></p> <p><img src="/assets/images/swoole-cli-mimalloc-offcputime.svg" alt="" /></p> <h2 id=what_about_newer_machines ><a href="#what_about_newer_machines" class=header-anchor >What about newer machines?</a></h2> <p>So I didn&#39;t all above on a Pentium T4500 machine, it&#39;s quite old.</p> <p>I copy the binary to an AMD Zen3 machine.</p> <p>The difference is not that much between musl malloc and mimalloc.</p> <p>With musl malloc &#40;from 400 to 14000&#41;:</p> <pre><code class="julia hljs">$  wrk -c <span class=hljs-number >250</span> -t <span class=hljs-number >2</span> -d <span class=hljs-number >60</span>s -L http://<span class=hljs-number >127.0</span><span class=hljs-number >.0</span><span class=hljs-number >.1</span>:<span class=hljs-number >9501</span>
+Running <span class=hljs-number >1</span>m test @ http://<span class=hljs-number >127.0</span><span class=hljs-number >.0</span><span class=hljs-number >.1</span>:<span class=hljs-number >9501</span>
+  <span class=hljs-number >2</span> threads and <span class=hljs-number >250</span> connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    <span class=hljs-number >17.84</span>ms  <span class=hljs-number >719.01</span>us  <span class=hljs-number >41.92</span>ms   <span class=hljs-number >63.52</span>%
+    Req/Sec     <span class=hljs-number >7.04</span>k   <span class=hljs-number >261.63</span>     <span class=hljs-number >7.47</span>k    <span class=hljs-number >56.83</span>%
+  Latency Distribution
+     <span class=hljs-number >50</span>%   <span class=hljs-number >17.54</span>ms
+     <span class=hljs-number >75</span>%   <span class=hljs-number >18.69</span>ms
+     <span class=hljs-number >90</span>%   <span class=hljs-number >18.87</span>ms
+     <span class=hljs-number >99</span>%   <span class=hljs-number >19.02</span>ms
+  <span class=hljs-number >840619</span> requests <span class=hljs-keyword >in</span> <span class=hljs-number >1.00</span>m, <span class=hljs-number >132.28</span>MB read
+Requests/sec:  <span class=hljs-number >14009.94</span>
+Transfer/sec:      <span class=hljs-number >2.20</span>MB</code></pre> <p>With mimalloc &#40;from 16000 to 160000&#41;:</p> <pre><code class="julia hljs">Running <span class=hljs-number >1</span>m test @ http://<span class=hljs-number >127.0</span><span class=hljs-number >.0</span><span class=hljs-number >.1</span>:<span class=hljs-number >9501</span>
+  <span class=hljs-number >2</span> threads and <span class=hljs-number >250</span> connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     <span class=hljs-number >1.47</span>ms   <span class=hljs-number >55.89</span>us   <span class=hljs-number >4.78</span>ms   <span class=hljs-number >97.60</span>%
+    Req/Sec    <span class=hljs-number >85.31</span>k     <span class=hljs-number >1.93</span>k   <span class=hljs-number >88.26</span>k    <span class=hljs-number >92.25</span>%
+  Latency Distribution
+     <span class=hljs-number >50</span>%    <span class=hljs-number >1.47</span>ms
+     <span class=hljs-number >75</span>%    <span class=hljs-number >1.48</span>ms
+     <span class=hljs-number >90</span>%    <span class=hljs-number >1.50</span>ms
+     <span class=hljs-number >99</span>%    <span class=hljs-number >1.54</span>ms
+  <span class=hljs-number >10189141</span> requests <span class=hljs-keyword >in</span> <span class=hljs-number >1.00</span>m, <span class=hljs-number >1.57</span>GB read
+Requests/sec: <span class=hljs-number >169815.19</span>
+Transfer/sec:     <span class=hljs-number >26.72</span>MB</code></pre> <p>Again, over 10x improvement&#33;</p> <p>And CPU improvement in these 10 years is HUGE.</p> <div class=page-foot > Kauruus <br> <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> <br> Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>. </div> </div> </div> </div> <script src="/libs/highlight/highlight.min.js"></script> <script>hljs.highlightAll();hljs.configure({tabReplace: ' '});</script>
