@@ -1,5 +1,5 @@
 +++
-title = "Proxy the Hard Way"
+title = "cproxy the Hard Way"
 has_code = true
 +++
 
@@ -7,14 +7,14 @@ has_code = true
 
 Today, I try to download some Julia packages, but I don't know how to config proxy for Julia.
 
-I trie `HTTP_PROXY` and `HTTPS_PROXY` environment variable, but it didn' work.
+I tried `HTTP_PROXY` and `HTTPS_PROXY` environment variable, but it didn' work.
 
 So I want to setting up a transparent proxy, so I don't need to figured out the exact config for it.
 
 
 ## cproxy
 
-[cproxy](https://github.com/NOBLES5E/cproxy) is cool project, it utlize cgroup to manage which program needs to be proxied.
+[cproxy](https://github.com/NOBLES5E/cproxy) is cool project, it utlizes cgroup to manage which program needs to be proxied.
 
 Give that you have a TCP proxy running on port 1081, you can start a new program, and redirect all it's traffic to the proxy.
 
@@ -38,11 +38,9 @@ $ sudo cproxy --port 1081 -- julia
 
 But this will download the packages for the root user, that's not what I want.
 
-And I did't realized that I can switch back to non-root user :(
+So I tried to modify cproxy, remove setuid from it, add capabilities to cproxy and iptables, and [it mostly works](https://github.com/NOBLES5E/cproxy/issues/80#issuecomment-1368251799).
 
-So I tried to modify cproxy, remove setuid from it, add capabilities to cproxy and iptables, and [mostly works](https://github.com/NOBLES5E/cproxy/issues/80#issuecomment-1368251799).
-
-Hey cproxy utlize cgroup, can I start a program in a existing cgroup?
+Hey cproxy utlizes cgroup, can I start a program in a existing cgroup?
 
 First start cproxy, and get it's pid:
 
