@@ -23,3 +23,5 @@ Add here global latex commands to use throughout your pages.
 -->
 \newcommand{\R}{\mhttps://tlienart.github.io/FranklinTemplates.jl/athbb R}
 \newcommand{\scal}[1]{\langle #1 \rangle}
+
+@def hasplotly = false
