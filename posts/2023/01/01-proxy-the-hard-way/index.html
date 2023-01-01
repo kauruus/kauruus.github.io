@@ -1,0 +1,34 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/tufte.css"> <link rel=stylesheet  href="/css/latex.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=icon  href="/assets/favicon.png"> <title>Proxy the Hard Way</title> <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "0550f3275b4a4db8bfeefed116695300"}'></script> <div id=layout > <div id=menu > <ul> <li><a href="/">Home</a> </ul> </div> <div id=main > <div class=franklin-content > <h1 id=title ><a href="#title" class=header-anchor >Proxy the Hard Way</a></h1> <p>Today, I try to download some Julia packages, but I don&#39;t know how to config proxy for Julia.</p> <p>I trie <code>HTTP_PROXY</code> and <code>HTTPS_PROXY</code> environment variable, but it didn&#39; work.</p> <p>So I want to setting up a transparent proxy, so I don&#39;t need to figured out the exact config for it.</p> <h2 id=cproxy ><a href="#cproxy" class=header-anchor >cproxy</a></h2> <p><a href="https://github.com/NOBLES5E/cproxy">cproxy</a> is cool project, it utlize cgroup to manage which program needs to be proxied.</p> <p>Give that you have a TCP proxy running on port 1081, you can start a new program, and redirect all it&#39;s traffic to the proxy.</p> <pre><code class="julia hljs">$ cproxy --port <span class=hljs-number >1081</span> -- julia</code></pre>
+<p>But when I run it, it failed:</p>
+<pre><code class="julia hljs">Error: Running [<span class=hljs-string >&quot;iptables&quot;</span>, <span class=hljs-string >&quot;-t&quot;</span>, <span class=hljs-string >&quot;nat&quot;</span>, <span class=hljs-string >&quot;-N&quot;</span>, <span class=hljs-string >&quot;nozomi_redirect_out_31731&quot;</span>] exited with error; status code: <span class=hljs-number >111</span></code></pre>
+<p>Oh, starting from 1.8.8, <a href="https://git.netfilter.org/iptables/commit/?id&#61;ef7781eb1437a2d6fd37eb3567c599e3ea682b96">iptables can&#39;t be called by a setuid executable</a>.</p>
+<p>Okay, then I need <code>sudo</code>:</p>
+<pre><code class="julia hljs">$ sudo cproxy --port <span class=hljs-number >1081</span> -- julia</code></pre>
+<p>But this will download the packages for the root user, that&#39;s not what I want.</p>
+<p>And I did&#39;t realized that I can switch back to non-root user :&#40;</p>
+<p>So I tried to modify cproxy, remove setuid from it, add capabilities to cproxy and iptables, and <a href="https://github.com/NOBLES5E/cproxy/issues/80#issuecomment-1368251799">mostly works</a>.</p>
+<p>Hey cproxy utlize cgroup, can I start a program in a existing cgroup?</p>
+<p>First start cproxy, and get it&#39;s pid:</p>
+<pre><code class="julia hljs">$ sudo cproxy --port <span class=hljs-number >1081</span> -- bash -c &#x27;echo ${PPID}; sleep <span class=hljs-number >1</span>d&#x27;
+<span class=hljs-number >13279</span></code></pre>
+<p>Then use <code>cgexec</code> to start new program:</p>
+<pre><code class="julia hljs">$ cgexec -g cpu:cproxy-<span class=hljs-number >13279</span> bash
+cgroup change of group failed</code></pre>
+<p>Still need root permission:&#40;</p>
+<p>Then I suddenly realized, cgroup is inherited by child process, and I can switch from root to non-root user:</p>
+<pre><code class="julia hljs">$ sudo cproxy --port <span class=hljs-number >1081</span> -- bash
+<span class=hljs-comment ># su kauruus</span>
+$ julia</code></pre>
+<p>It waste me about 1 hour :&#40;</p>
+<div class=page-foot >
+    Kauruus <br>
+    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> <br>
+    Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+</div>
+</div>
+        </div> 
+    </div> 
+    
+    
+        <script src="/libs/highlight/highlight.min.js"></script>
+<script>hljs.highlightAll();hljs.configure({tabReplace: '    '});</script>
