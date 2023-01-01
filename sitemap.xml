@@ -32,6 +32,12 @@
     <priority>0.5</priority>
 </url>
 <url>
+    <loc>https://kauruus.github.io/posts/2023/01/02-visualize-web-framework-benchmark-result/index.html</loc>
+    <lastmod>2023-01-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
     <loc>https://kauruus.github.io/posts/2022/12/27-first-post/index.html</loc>
     <lastmod>2023-01-01</lastmod>
     <changefreq>monthly</changefreq>
