@@ -149,7 +149,7 @@ Maybe you would say this is data structures and algorithms book, not a Go book, 
 
 But then why not grab a serious algorithm book?
 
-The only possible sell point of this book is Go, but it failed to achieve it.
+The only possible selling point of this book is Go, but it failed to achieve it.
 
 My rating: ★☆☆☆☆ (1/5), Not Recommended.
 
