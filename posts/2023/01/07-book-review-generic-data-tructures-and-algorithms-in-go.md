@@ -75,7 +75,7 @@ Besides the introductory chapter, there are only 3 chapters that involve concurr
 
 In chapter 4, the book introduces Game of Life. 
 
-It utlize [fyne](https://fyne.io/) to display the grid, so it need to run the simulation in a goroutine. Fine use case but not related to data structure and algorithm.
+It utilize [fyne](https://fyne.io/) to display the grid, so it need to run the simulation in a goroutine. Fair use case but not related to data structure and algorithm.
 
 In chapter 10, it implement a "concurrent" AVL tree, bascailly a sharding map, not very interesting.
 
@@ -129,7 +129,7 @@ I will simply select one agent randomly and update it, no concurrency, no lockin
 
 Many code are duplicated, first in introduction, then in complete program.
 
-The last chapter include the traning progress of a neural networks, 99 lines of `cost = 0.XXXXX`. 
+The last chapter include the training progress of a neural networks, 99 lines of `cost = 0.XXXXX`. 
 
 Thank God, the author replace some output with `...`, so we have only 99 lines.
 
@@ -145,9 +145,9 @@ For introducing generics, I would say most blog post on the internet did a bette
 
 It's probably the wrost Go book of 2022.
 
-Maybe you would say this is data structures and algorithms book, not Go, so some minor incorrect usage of Go are okay.
+Maybe you would say this is data structures and algorithms book, not a Go book, so some incorrect usage of Go is okay.
 
-But then why not grap a serious algorithm book?
+But then why not grab a serious algorithm book?
 
 The only possible sell point of this book is Go, but it failed to achieve it.
 
