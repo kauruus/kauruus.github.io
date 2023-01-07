@@ -2,62 +2,68 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
-    <loc>https://kauruus.github.io/posts/2023/01/01-visualize-web-framework-benchmark-result/index.html</loc>
-    <lastmod>2023-01-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-</url>
-<url>
     <loc>https://kauruus.github.io/404/index.html</loc>
-    <lastmod>2023-01-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-</url>
-<url>
-    <loc>https://kauruus.github.io/index.html</loc>
-    <lastmod>2023-01-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-</url>
-<url>
-    <loc>https://kauruus.github.io/posts/2022/12/28-build-swoole-cli-for-old-machines/index.html</loc>
-    <lastmod>2023-01-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-</url>
-<url>
-    <loc>https://kauruus.github.io/posts/2022/12/28-build-cubicsdr-for-archlinux/index.html</loc>
-    <lastmod>2023-01-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-</url>
-<url>
-    <loc>https://kauruus.github.io/posts/2023/01/06-my-first-aur-package-tuic-bin/index.html</loc>
-    <lastmod>2023-01-06</lastmod>
+    <lastmod>2023-01-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>https://kauruus.github.io/posts/2022/12/29-high-hpet-cpu-usage/index.html</loc>
-    <lastmod>2023-01-06</lastmod>
+    <lastmod>2023-01-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
-    <loc>https://kauruus.github.io/posts/2022/12/27-first-post/index.html</loc>
-    <lastmod>2023-01-06</lastmod>
+    <loc>https://kauruus.github.io/posts/2023/01/01-visualize-web-framework-benchmark-result/index.html</loc>
+    <lastmod>2023-01-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>https://kauruus.github.io/posts/2023/01/06-my-first-aur-package-tuic-bin/index.html</loc>
+    <lastmod>2023-01-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>https://kauruus.github.io/index.html</loc>
+    <lastmod>2023-01-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>https://kauruus.github.io/posts/2022/12/28-build-cubicsdr-for-archlinux/index.html</loc>
+    <lastmod>2023-01-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>https://kauruus.github.io/posts/2022/12/28-build-swoole-cli-for-old-machines/index.html</loc>
+    <lastmod>2023-01-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>https://kauruus.github.io/posts/2023/01/01-cproxy-the-hard-way/index.html</loc>
-    <lastmod>2023-01-06</lastmod>
+    <lastmod>2023-01-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>https://kauruus.github.io/posts/2023/01/07-book-review-generic-data-tructures-and-algorithms-in-go/index.html</loc>
+    <lastmod>2023-01-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>https://kauruus.github.io/posts/2022/12/27-first-post/index.html</loc>
+    <lastmod>2023-01-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>https://kauruus.github.io/posts/2022/12/30-musl-malloc-is-slow/index.html</loc>
-    <lastmod>2023-01-06</lastmod>
+    <lastmod>2023-01-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
