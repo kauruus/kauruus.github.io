@@ -4,7 +4,7 @@ title = "Check Go Escape Analysis Result in Emacs"
 
 # {{title}}
 
-Sometimes, you may need zero heap allocation in extreamly critical code path (which is rare).
+Sometimes, you may need zero heap allocation in extremely critical code path (which is rare).
 
 To do that, you can run benchmark with `-benchmem` or check Go compiler's escape analysis result.
 

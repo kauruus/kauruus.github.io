@@ -14,7 +14,7 @@ So I usually download it from Github release page, and put it to `$PATH`.
 
 Go to release page, find the correct build, copy the url, wget, put it to `$PATH` ... I'm tired of it.
 
-So I wirte my first PKGBUILD and submit it to AUR: [tuic-bin](https://aur.archlinux.org/packages/tuic-bin).
+So I write my first PKGBUILD and submit it to AUR: [tuic-bin](https://aur.archlinux.org/packages/tuic-bin).
 
 ## Writing PKGBUILD
 

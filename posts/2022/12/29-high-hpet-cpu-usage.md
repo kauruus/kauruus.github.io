@@ -51,7 +51,7 @@ There are many great articles about HPET and TSC:
 - [Pitfalls of TSC usage](https://oliveryang.net/2015/09/pitfalls-of-TSC-usage/#32-software-tsc-usage-bugs)
 - [A Performance Issue Caused by the TSC Clock Source Missing in Linux](https://deeperf.com/2019/04/30/tsc-clock-missing-caused-performance-issues/)
 
-Basically, HPET clock is from a chip on the monitor, while TSC is from inside the CPU. So HPET cost much more than TSC, and it's less accurate.
+Basically, HPET clock is from a chip on the motherboard, while TSC is from inside the CPU. So HPET cost much more than TSC, and it's less accurate.
 
 ## Why using HEPT?  
 
@@ -71,7 +71,7 @@ $ cat /sys/devices/system/clocksource/clocksource0/available_clocksource
 hpet acpi_pm
 ```
 
-Why? Because kernel found TSC skew is too large, and mark TSC as unstable:
+Why? Because kernel found the skew is too large, and mark TSC as unstable:
 
 ```
 $ sudo dmesg | rg 'tsc|clocksource'
