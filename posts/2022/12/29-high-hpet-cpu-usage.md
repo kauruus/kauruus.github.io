@@ -14,15 +14,15 @@ From `perf report`, `wrk2` spend over 60% CPU time on `read_hpet`, while `wrk` u
 wrk2:
 
 ```
-Overhead  Command  Shared Object     Symbol
-  64.43%  wrk2     [kernel.vmlinux]  [k] read_hpet                                                                                                                                                                                                                  ◆
-   2.53%  wrk2     [vdso]            [.] __vdso_gettimeofday                                                                                                                                                                                                        ▒
-   1.86%  wrk2     [kernel.vmlinux]  [k] entry_SYSRETQ_unsafe_stack                                                                                                                                                                                                 ▒
-   1.44%  wrk2     [kernel.vmlinux]  [k] exit_to_user_mode_prepare                                                                                                                                                                                                  ▒
-   0.85%  wrk2     wrk2              [.] http_parser_execute                                                                                                                                                                                                        ▒
-   0.80%  wrk2     [kernel.vmlinux]  [k] entry_SYSCALL_64_after_hwframe                                                                                                                                                                                             ▒
-   0.79%  wrk2     wrk2              [.] aeProcessEvents.part.0                                                                                                                                                                                                     ▒
-   0.66%  wrk2     [kernel.vmlinux]  [k] tcp_ack
+Overhead  Command  Shared Object     Symbol 
+  64.43%  wrk2     [kernel.vmlinux]  [k] read_hpet
+   2.53%  wrk2     [vdso]            [.] __vdso_gettimeofday 
+   1.86%  wrk2     [kernel.vmlinux]  [k] entry_SYSRETQ_unsafe_stack
+   1.44%  wrk2     [kernel.vmlinux]  [k] exit_to_user_mode_prepare 
+   0.85%  wrk2     wrk2              [.] http_parser_execute      
+   0.80%  wrk2     [kernel.vmlinux]  [k] entry_SYSCALL_64_after_hwframe
+   0.79%  wrk2     wrk2              [.] aeProcessEvents.part.0       
+   0.66%  wrk2     [kernel.vmlinux]  [k] tcp_ack 
    ...
 ```
 
@@ -30,15 +30,15 @@ wrk:
 
 ```
 Overhead  Command  Shared Object     Symbol
-  19.40%  wrk      [kernel.vmlinux]  [k] read_hpet                                                                                                                                                                                                                  ◆
-   3.14%  wrk      wrk               [.] http_parser_execute                                                                                                                                                                                                        ▒
-   2.19%  wrk      [kernel.vmlinux]  [k] tcp_ack                                                                                                                                                                                                                    ▒
-   1.71%  wrk      [kernel.vmlinux]  [k] do_epoll_ctl                                                                                                                                                                                                               ▒
-   1.35%  wrk      [kernel.vmlinux]  [k] tcp_poll                                                                                                                                                                                                                   ▒
-   1.35%  wrk      [kernel.vmlinux]  [k] __fget_light                                                                                                                                                                                                               ▒
-   1.27%  wrk      [kernel.vmlinux]  [k] tcp_sendmsg_locked                                                                                                                                                                                                         ▒
-   1.12%  wrk      [kernel.vmlinux]  [k] __tcp_transmit_skb                                                                                                                                                                                                         ▒
-   1.09%  wrk      [kernel.vmlinux]  [k] sock_poll                                                                                                                                                                                                                  ▒
+  19.40%  wrk      [kernel.vmlinux]  [k] read_hpet                                                                                                                                                                                                                  
+   3.14%  wrk      wrk               [.] http_parser_execute
+   2.19%  wrk      [kernel.vmlinux]  [k] tcp_ack       
+   1.71%  wrk      [kernel.vmlinux]  [k] do_epoll_ctl   
+   1.35%  wrk      [kernel.vmlinux]  [k] tcp_poll        
+   1.35%  wrk      [kernel.vmlinux]  [k] __fget_light     
+   1.27%  wrk      [kernel.vmlinux]  [k] tcp_sendmsg_locked
+   1.12%  wrk      [kernel.vmlinux]  [k] __tcp_transmit_skb
+   1.09%  wrk      [kernel.vmlinux]  [k] sock_poll
    1.01%  wrk      [kernel.vmlinux]  [k] tcp_v4_rcv
 ```
 
