@@ -1,5 +1,6 @@
 +++
 title = "Musl Malloc is Slow"
+has_code = true
 +++
 
 # {{ title }}
