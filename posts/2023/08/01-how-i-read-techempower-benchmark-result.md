@@ -25,16 +25,16 @@ csv_file = CSV.File("./_assets/tfb-273fa177.csv")
 data = DataFrame(csv_file)
 
 layout = Layout(
-    yaxis_title="Frameworks", 
-    xaxis_title="QPS", 
+    yaxis_title="QPS", 
+    xaxis_title="Test", 
     height=1000,
     margin=attr(l=40, r=40, b=20, t=20),
 )
 
 layout_log = Layout(
-    yaxis_title="Frameworks", 
+    yaxis_title="QPS", 
     yaxis_type="log",
-    xaxis_title="QPS", 
+    xaxis_title="Test", 
     height=1000,
     margin=attr(l=40, r=40, b=20, t=20),
 )
