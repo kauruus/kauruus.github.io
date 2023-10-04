@@ -6,7 +6,7 @@ function hfun_m1fill(vname)
 end
 
 # modify from https://github.com/tlienart/tilenart.github.io
-function hfun_posts()
+@delay function hfun_posts()
     curyear = year(Dates.today())
     io = IOBuffer()
     for year in curyear:-1:2022
