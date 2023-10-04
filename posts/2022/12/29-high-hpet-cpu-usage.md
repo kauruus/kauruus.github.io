@@ -1,6 +1,6 @@
 +++
 title = "High HPET CPU Usage"
-has_code = true
+hascode = true
 +++
 
 # {{ title }}

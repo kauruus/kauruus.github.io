@@ -1,6 +1,6 @@
 +++
 title = "First Post"
-has_code = true
+hascode = true
 +++
 
 # {{ title }}

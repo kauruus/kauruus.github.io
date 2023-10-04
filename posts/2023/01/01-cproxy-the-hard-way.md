@@ -1,6 +1,6 @@
 +++
 title = "cproxy the Hard Way"
-has_code = true
+hascode = true
 +++
 
 # {{title}}

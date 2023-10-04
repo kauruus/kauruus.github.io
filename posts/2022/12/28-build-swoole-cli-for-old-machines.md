@@ -1,6 +1,6 @@
 +++
 title = "Build swoole-cli for Old Machines"
-has_code = true
+hascode = true
 +++
 
 # {{ title }}
