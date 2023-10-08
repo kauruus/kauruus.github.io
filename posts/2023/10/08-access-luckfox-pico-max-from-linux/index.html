@@ -1,0 +1,59 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/tufte.css"> <link rel=stylesheet  href="/css/latex.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=icon  href="/assets/favicon.png"> <title>Access LuckFox Pico Max from Linux</title> <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "0550f3275b4a4db8bfeefed116695300"}'></script> <div id=layout > <div id=menu > <ul> <li><a href="/">Home</a> </ul> </div> <div id=main > <div class=franklin-content > <h1 id=title ><a href="#title" class=header-anchor >Access LuckFox Pico Max from Linux</a></h1> <p>Recently I bought a Luckfox Pico, a low-cost micro Linux development boards.</p> <p>However the <a href="https://wiki.luckfox.com/Luckfox-Pico/Luckfox-Pico-quick-start/#network-adb-debugging">official docs</a> is Windows only, I have to figure out how to connect to it from Linux.</p> <h2 id=connect_through_usb_rndis ><a href="#connect_through_usb_rndis" class=header-anchor >Connect through USB &#40;RNDIS&#41;</a></h2> <p>When I plug in the board to my machine, <code>dmesg</code> shows:</p> <pre><code class="julia hljs">[<span class=hljs-number >106711.735124</span>] usb <span class=hljs-number >1</span>-<span class=hljs-number >2</span>: new high-speed USB device number <span class=hljs-number >3</span> <span class=hljs-keyword >using</span> xhci_hcd
+[<span class=hljs-number >106711.884152</span>] usb <span class=hljs-number >1</span>-<span class=hljs-number >2</span>: New USB device found, idVendor=<span class=hljs-number >2207</span>, idProduct=<span class=hljs-number >0019</span>, bcdDevice= <span class=hljs-number >3.10</span>
+[<span class=hljs-number >106711.884168</span>] usb <span class=hljs-number >1</span>-<span class=hljs-number >2</span>: New USB device strings: Mfr=<span class=hljs-number >1</span>, Product=<span class=hljs-number >2</span>, SerialNumber=<span class=hljs-number >3</span>
+[<span class=hljs-number >106711.884173</span>] usb <span class=hljs-number >1</span>-<span class=hljs-number >2</span>: Product: rk3xxx
+[<span class=hljs-number >106711.884177</span>] usb <span class=hljs-number >1</span>-<span class=hljs-number >2</span>: Manufacturer: rockchip
+[<span class=hljs-number >106711.884179</span>] usb <span class=hljs-number >1</span>-<span class=hljs-number >2</span>: SerialNumber: ca2b43c81417032
+[<span class=hljs-number >106712.622333</span>] usbcore: registered new interface driver cdc_ether
+[<span class=hljs-number >106712.636526</span>] rndis_host <span class=hljs-number >1</span>-<span class=hljs-number >2</span>:<span class=hljs-number >1.0</span> usb0: register &#x27;rndis_host&#x27; at usb-<span class=hljs-number >0000</span>:<span class=hljs-number >05</span>:<span class=hljs-number >00.3</span>-<span class=hljs-number >2</span>, RNDIS device, c6:<span class=hljs-number >9</span>e:eb:<span class=hljs-number >2</span>b:<span class=hljs-number >6</span>b:<span class=hljs-number >3</span>f
+[<span class=hljs-number >106712.636641</span>] usbcore: registered new interface driver rndis_host
+[<span class=hljs-number >106712.648403</span>] rndis_host <span class=hljs-number >1</span>-<span class=hljs-number >2</span>:<span class=hljs-number >1.0</span> enp5s0f3u2: renamed from usb0</code></pre> <p>As you can see, it supports rndis, and the network interface is renamed to <code>enp5s0f3u2</code>.</p> <pre><code class="shell hljs"><span class="hljs-meta prompt_">$ </span><span class=language-bash >ip <span class=hljs-built_in >link</span> show enp5s0f3u2</span>
+4: enp5s0f3u2: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether c6:9e:eb:2b:6b:3f brd ff:ff:ff:ff:ff:ff</code></pre> <p>let&#39;s set it up and assign a IP address &#40;take 172.32.0.100 from the docs&#41; to it:</p> <pre><code class="shell hljs"><span class="hljs-meta prompt_"># </span><span class=language-bash >ip <span class=hljs-built_in >link</span> <span class=hljs-built_in >set</span> enp5s0f3u2 up</span>
+<span class="hljs-meta prompt_"># </span><span class=language-bash >ip addr add 172.32.0.100 dev enp5s0f3u2</span>
+<span class="hljs-meta prompt_"># </span><span class=language-bash >ip addr show enp5s0f3u2</span>
+4: enp5s0f3u2: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UNKNOWN group default qlen 1000
+    link/ether c6:9e:eb:2b:6b:3f brd ff:ff:ff:ff:ff:ff
+    inet 172.32.0.100/32 scope global enp5s0f3u2
+       valid_lft forever preferred_lft forever
+    inet6 fe80::c49e:ebff:fe2b:6b3f/64 scope link proto kernel_ll
+       valid_lft forever preferred_lft forever</code></pre> <p>from the official docs, the default image supports adb, but seems it doesn&#39;t work:</p> <pre><code class="shell hljs"><span class="hljs-meta prompt_"># </span><span class=language-bash >adb connect 173.32.0.100</span>
+* daemon not running; starting now at tcp:5037
+* daemon started successfully
+failed to connect to &#x27;173.32.0.100:5555&#x27;: Connection refused</code></pre> <p>let&#39;s do a port scan:</p> <pre><code class="shell hljs"><span class="hljs-meta prompt_"># </span><span class=language-bash >rustscan -a 173.32.0.100</span>
+...
+PORT     STATE SERVICE   REASON
+53/tcp   open  domain    syn-ack
+1080/tcp open  socks     syn-ack
+9100/tcp open  jetdirect syn-ack</code></pre> <p>ohh, this is my local machine, not the board :&#40;</p> <p>to access the board, i need the address of the board instead of my machine.</p> <p>from the docs, it&#39;s <code>172.32.0.93</code>. let&#39;s add a route to it and try again:</p> <pre><code class="shell hljs"><span class="hljs-meta prompt_"># </span><span class=language-bash >ip route add 172.32.0.93 dev enp5s0f3u2</span>
+<span class="hljs-meta prompt_"># </span><span class=language-bash >rustscan -a 172.32.0.93</span>
+...
+PORT     STATE SERVICE REASON
+5555/tcp open  freeciv syn-ack
+<span class="hljs-meta prompt_"># </span><span class=language-bash >adb connect 172.32.0.93</span>
+* daemon not running; starting now at tcp:5037
+* daemon started successfully
+connected to 172.32.0.93:5555</code></pre> <p>it succeed :&#41;</p> <pre><code class="shell hljs"><span class="hljs-meta prompt_"># </span><span class=language-bash >adb -s 172.32.0.93:5555 shell</span>
+<span class="hljs-meta prompt_"># </span><span class=language-bash ><span class=hljs-built_in >uname</span> -a</span>
+Linux Rockchip 5.10.110 #1 Tue Sep 26 17:50:43 CST 2023 armv7l GNU/Linux
+<span class="hljs-meta prompt_"># </span><span class=language-bash >ifconfig</span>
+usb0      Link encap:Ethernet  HWaddr 1E:22:8C:FC:6F:FE
+          inet addr:172.32.0.93  Bcast:172.32.255.255  Mask:255.255.0.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:66302 errors:0 dropped:15 overruns:0 frame:0
+          TX packets:66389 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:3978211 (3.7 MiB)  TX bytes:6526339 (6.2 MiB)</code></pre> <h2 id=why_17232093 ><a href="#why_17232093" class=header-anchor >Why 172.32.0.93 ?</a></h2> <p>So how is the board configure it&#39;s ip to <code>172.32.0.93</code>?</p> <p>It&#39;s hardcoded in <code>/etc/init.d/S99usb0config</code></p> <pre><code class="bash hljs">TARGET_IP=<span class=hljs-string >&quot;172.32.0.93&quot;</span></code></pre>
+<p>When the system boots, it config the network interface to <code>TARGET_IP</code>.</p>
+<div class=page-foot >
+    Kauruus <br>
+    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> <br>
+    Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+</div>
+</div>
+        </div> 
+    </div> 
+    
+    
+        <script src="/libs/highlight/highlight.min.js"></script>
+<script>hljs.highlightAll();hljs.configure({tabReplace: '    '});</script>
