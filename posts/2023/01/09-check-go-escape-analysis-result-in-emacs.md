@@ -1,5 +1,6 @@
 +++
 title = "Check Go Escape Analysis Result in Emacs"
+hascode = true
 +++
 
 # {{title}}
@@ -11,7 +12,7 @@ To do that, you can run benchmark with `-benchmem` or check Go compiler's escape
 Showing the result in Emacs is easy, you simply define a flycheck checker:
 
 
-```
+```lisp
 (flycheck-define-checker goescape
   "Check Go escape analysis result"
   :command ("go" "build" "-gcflags=-m" "./...")

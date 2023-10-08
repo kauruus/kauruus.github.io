@@ -16,7 +16,7 @@ To light LED1, we need the electric current flow from `VCC` to `P10`.
 
 ## Code
 
-```c
+```cpp
 #include "stc8fsdcc.h"
 #include "delay.h"
 

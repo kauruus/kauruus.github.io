@@ -19,7 +19,7 @@ I read this book last year, shortly after it's released on O'Reilly. It's probab
 
 Chapter 7 introduces a simple closed addressing[^1] hash table, and according to author's benchmark, it's **3000x** slower than Go's map[^2].
 
-```
+```shell
 Benchmark test begins to test words: 500000
 Time to test all words in myTable: 1m17.880336666s
 Time to test words in mapCollection: 24.405583ms
@@ -34,7 +34,7 @@ How can you accept that you have implemented such a slow hash table without ques
 
 Let's see if you can spot the problem from only the type definition:
 
-```
+```go
 const tableSize = 100_000
 
 type HashTable [tableSize]WordType
@@ -55,7 +55,7 @@ Aha, `HashTable` is an array, and `IsPresent` takes a value receiver. So everyti
 
 I fixed it by simply adding a `*`, and here's the benchmark result:
 
-```
+```shell
 goos: linux
 goarch: amd64
 cpu: AMD Ryzen 7 5800H with Radeon Graphics
@@ -84,7 +84,7 @@ In chapter 14, we get another simulation. This time we simulate three species in
 Inside a 50x50 grid, we have agents that move concurrently according to some rules. Here's how they are implemented:
 
 
-```
+```go
 func (shark *Shark) Move() {
 	for ; quit == false ; {
 		if shark.x == -1 {
@@ -160,7 +160,7 @@ My rating: ★☆☆☆☆ (1/5), Not Recommended.
 
 [^3]: I also did this benchmark on my Pentium T4500 machine, still no 10x slowness
 
-```
+```shell
 cpu: Pentium(R) Dual-Core CPU       T4500  @ 2.30GHz
 BenchmarkHashTable-2           7         147249004 ns/op               0 B/op          0 allocs/op
 BenchmarkMap-2                12          97398657 ns/op               0 B/op          0 allocs/op

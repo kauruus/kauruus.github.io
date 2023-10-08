@@ -13,7 +13,7 @@ However the [official docs](https://wiki.luckfox.com/Luckfox-Pico/Luckfox-Pico-q
 
 When I plug in the board to my machine, `dmesg` shows:
 
-```
+```shell
 [106711.735124] usb 1-2: new high-speed USB device number 3 using xhci_hcd
 [106711.884152] usb 1-2: New USB device found, idVendor=2207, idProduct=0019, bcdDevice= 3.10
 [106711.884168] usb 1-2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
@@ -111,5 +111,6 @@ It's hardcoded in `/etc/init.d/S99usb0config`
 ```bash
 TARGET_IP="172.32.0.93"
 ```
+
 When the system boots, it config the network interface to `TARGET_IP`.
 
