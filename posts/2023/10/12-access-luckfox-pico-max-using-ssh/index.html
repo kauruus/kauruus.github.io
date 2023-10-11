@@ -1,0 +1,37 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="/css/tufte.css"> <link rel=stylesheet  href="/css/latex.css"> <link rel=stylesheet  href="/css/adjust.css"> <link rel=icon  href="/assets/favicon.png"> <title>Access LuckFox Pico Max using SSH</title> <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "0550f3275b4a4db8bfeefed116695300"}'></script> <div id=layout > <div id=menu > <ul> <li><a href="/">Home</a> </ul> </div> <div id=main > <div class=franklin-content > <h1 id=title ><a href="#title" class=header-anchor >Access LuckFox Pico Max using SSH</a></h1> <h1 id=get_the_cross_compile_toolchain ><a href="#get_the_cross_compile_toolchain" class=header-anchor >Get The Cross Compile Toolchain</a></h1> <p>The official toolchain is <code>arm-rockchip830-linux-uclibcgnueabihf</code>, which can be obtained <a href="https://github.com/LuckfoxTECH/luckfox-pico/tree/main/tools/linux/toolchain/arm-rockchip830-linux-uclibcgnueabihf">here</a>.</p> <p>Instead of the official one, I use <code>armv7l-linux-musleabihf</code> from <a href="https://musl.cc">musl.cc</a>.</p> <p>You can chose whatever you want, I just happend to have the musl.cc one and don&#39;t bother to download another one.</p> <h1 id=build_dropbear_ssh ><a href="#build_dropbear_ssh" class=header-anchor >Build Dropbear SSH</a></h1> <p>Here I use <a href="https://matt.ucc.asn.au/dropbear/dropbear.html">Dropbear</a> instead of OpenSSH, since it&#39;s considerable smaller than OpenSSH, and it&#39;s easier to compile.</p> <p>Download current latest release:</p> <pre><code class="shell hljs"><span class="hljs-meta prompt_">$ </span><span class=language-bash >wget https://matt.ucc.asn.au/dropbear/releases/dropbear-2022.83.tar.bz3</span>
+<span class="hljs-meta prompt_">$ </span><span class=language-bash >tar xf dropbear-2022.83.tar.bz3</span>
+<span class="hljs-meta prompt_">$ </span><span class=language-bash ><span class=hljs-built_in >cd</span> dropbear-2022.83</span></code></pre> <p>Configure and build:</p> <pre><code class="shell hljs"><span class="hljs-meta prompt_">$ </span><span class=language-bash >./configure --host=armv7l-linux-musleabihf --disable-zlib --disable-syslog --disable-lastlog --enable-static --disable-wtmp</span>
+<span class="hljs-meta prompt_">$ </span><span class=language-bash >make PROGRAMS=<span class=hljs-string >&#x27;dropbear scp&#x27;</span> SCPPROGRESS=1</span></code></pre> <p>Here I build only the <code>dropbear</code> server and <code>scp</code>, since i use the ssh client from OpenSSH.</p> <p>Notice: OpenSSH has deprecated SCP and use SFTP protocol by default. To use SCP, you need <code>-O</code> flag, e.g, <code>scp -O file root@172.32.0.93:/tmp</code>.</p> <h1 id=setup ><a href="#setup" class=header-anchor >Setup</a></h1> <p>Push <code>dropbear</code> and <code>scp</code> binary using ADB:</p> <pre><code class="shell hljs"><span class="hljs-meta prompt_">$ </span><span class=language-bash >adb -s 172.32.0.93:5555 push dropbear /bin</span>
+<span class="hljs-meta prompt_">$ </span><span class=language-bash >adb -s 172.32.0.93:5555 push scp /bin</span></code></pre> <p>In ADB shell, change root password and correct <code>/root</code> permission:</p> <pre><code class="shell hljs"><span class="hljs-meta prompt_"># </span><span class=language-bash >passwd</span> 
+<span class="hljs-meta prompt_"># </span><span class=language-bash ><span class=hljs-built_in >chown</span> 0:0 /root</span>
+<span class="hljs-meta prompt_"># </span><span class=language-bash ><span class=hljs-built_in >chmod</span> 700 /root</span></code></pre> <p>Then run the dropbear server:</p> <pre><code class="shell hljs"><span class="hljs-meta prompt_"># </span><span class=language-bash ><span class=hljs-built_in >mkdir</span> /etc/dropbear</span>
+<span class="hljs-meta prompt_"># </span><span class=language-bash >dropbear -R -F</span></code></pre> <p><code>-R</code> means <code>Create hostkeys as required</code>, it will create host key when you connect to it.</p> <p>Now you can connect to it:</p> <pre><code class="shell hljs"><span class="hljs-meta prompt_">$ </span><span class=language-bash >ssh root@172.32.0.93</span></code></pre>
+<h1 id=make_it_start_automatically ><a href="#make_it_start_automatically" class=header-anchor >Make it Start Automatically</a></h1>
+<p>Create a init file <code>/etc/init.d/S99dropbear</code>:</p>
+<pre><code class="bash hljs"><span class=hljs-meta >#!/bin/sh</span>
+<span class=hljs-keyword >case</span> <span class=hljs-variable >$1</span> <span class=hljs-keyword >in</span>
+	start)
+		/bin/dropbear
+		;;
+	stop)
+		killall dropbear
+		;;
+	*)
+		<span class=hljs-built_in >exit</span> 1
+		;;
+<span class=hljs-keyword >esac</span></code></pre>
+<p>The next you start the system, it will run <code>dropbear</code> automatically.</p>
+<div class=page-foot >
+    Kauruus <br>
+    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> <br>
+    Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+</div>
+</div>
+        </div> 
+    </div> 
+    
+    
+        <script src="/libs/highlight/highlight.min.js"></script>
+<script src="/libs/highlight/languages/lisp.min.js"></script>
+<script src="/libs/highlight/languages/julia.min.js"></script>
+<script>hljs.highlightAll();hljs.configure({tabReplace: '    '});</script>
