@@ -11,7 +11,7 @@ The official toolchain is `arm-rockchip830-linux-uclibcgnueabihf`, which can be 
 
 Instead of the official one, I use `armv7l-linux-musleabihf` from [musl.cc](https://musl.cc).
 
-You can chose whatever you want, I just happend to have the musl.cc one and don't bother to download another one.
+You can chose whatever you want, I just happen to have the musl.cc one and don't bother to download another one.
 
 # Build Dropbear SSH
 

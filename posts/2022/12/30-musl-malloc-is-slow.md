@@ -29,7 +29,7 @@ Transfer/sec:     70.11KB
 
 ```
 
-OMG, QPS is less than 500. On the same machine, Go can do over 10k qps.
+OMG, QPS is less than 500. On the same machine, Go can achieve >10k QPS.
 
 ## Flamegraph to help
 
@@ -48,7 +48,7 @@ And here's the flamegraph(open in new tab to see details), frankly speeking, I d
 ![](/assets/images/swoole-cli-flamegraph.svg)
 
 
-What about off-CPU time? 
+How about off-CPU time? 
 
 ```
 $ /usr/share/bcc/tools/offcputime -df -p $(pidof swoole-cli) > wait.stack
@@ -57,21 +57,20 @@ $ < wait.stack inferno-flamegraph -c blue > offcputime.svg
 
 ![](/assets/images/swoole-cli-offcputime.svg)
 
-Hmm, we are waiting for `__munmap` and `enframe` and lots of page faults. Maybe memory issue?
+Hmm, we are waiting for `__munmap` and `enframe` and lots of page faults. Maybe memory issue? Maybe it's related to the memory allocator?
 
 ## Mimalloc to help
 
-
 We all known musl's malloc is slow, and swoole-cli has [support mimalloc](https://github.com/swoole/swoole-cli/pull/6).
 
-Let's see if my swoole-cli using mimalloc:
+Let's see if my swoole-cli is using mimalloc:
 
 ```
 $ MIMALLOC_VERBOSE=1 swoole-cl
 (no output)
 ```
 
-Ah, mimalloc is not linked.
+Nope, mimalloc is not linked.
 
 From the build script, I found it didn't add `-lmimalloc` :(
 
@@ -108,7 +107,7 @@ mimalloc: option 'segment_decommit_delay': 500
 mimalloc: option 'decommit_extend_delay': 2
 ```
 
-And now it performs much better:
+And now it performs much better, 37x improvement:
 
 ```
 Running 10s test @ http://127.0.0.1:9501
@@ -133,11 +132,11 @@ Again, from the on-CPU flamegraph I can't see any problem. But from the off-CPU 
 
 ![](/assets/images/swoole-cli-mimalloc-offcputime.svg)
 
-## What about newer machines?
+## How about newer machines?
 
-So I did all above on a Pentium T4500 machine, it's quite old.
+I did all above on a Pentium T4500 machine, it's quite old.
 
-I also copy the binary to an AMD Zen3 machine to see how it performs.
+So I copy the binary to an AMD Zen3 machine to see how it performs.
 
 With musl malloc (from 400 to 14000):
 
@@ -179,5 +178,5 @@ Transfer/sec:     26.72MB
 
 Again, over 10x improvement!
 
-And CPU improvement in these 10 years is HUGE.
+CPU improvement in these 10 years is HUGE.
 

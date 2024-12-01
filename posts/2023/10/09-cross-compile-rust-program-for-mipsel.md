@@ -7,7 +7,7 @@ hascode = true
 
 Long time ago, I bought one [Xiaomi Mi WiFi Mini](https://openwrt.org/toh/xiaomi/miwifi_mini) and installed OpenWrt on it. And I want to put some Rust program on it, so cross-compilation is needed.
 
-## Chosing a Toolchain
+## Choosing a Toolchain
 
 To cross compile program for it, we first need a toolchain.
 
